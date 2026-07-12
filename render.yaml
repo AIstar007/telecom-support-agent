@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: telecom-support-copilot
+    name: telecom-support-agent
     env: docker
     plan: free
     healthCheckPath: /health

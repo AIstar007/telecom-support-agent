@@ -7,7 +7,7 @@
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector%20Store-orange)
 ![Tests](https://img.shields.io/badge/tests-29%20passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)
-![CI](https://github.com/AIstar007/telecom-support-copilot/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/AIstar007/telecom-support-agent/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 > Built for **The Talent Hack** (Deutsche Telekom Digital Labs) — AI Engineer track.
@@ -56,8 +56,8 @@ A customer asks a support question. The bot:
 ## Quick Start
 
 ```bash
-git clone https://github.com/AIstar007/telecom-support-copilot.git
-cd telecom-support-copilot
+git clone https://github.com/AIstar007/telecom-support-agent.git
+cd telecom-support-agent
 pip install -r requirements.txt
 
 # Ingest the policy docs into the vector store (run once, or whenever docs change)
@@ -87,8 +87,8 @@ pytest tests/ --cov=app --cov-report=term-missing
 ### Docker
 
 ```bash
-docker build -t telecom-support-copilot .
-docker run -p 8000:8000 --env-file .env telecom-support-copilot
+docker build -t telecom-support-agent .
+docker run -p 8000:8000 --env-file .env telecom-support-agent
 ```
 
 ## Design notes
