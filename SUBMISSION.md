@@ -1,4 +1,4 @@
-# Telecom Support Copilot
+# Telecom Support Agent
 **Role target: AI Engineer **
 
 ## Problem
@@ -8,7 +8,7 @@ a straight answer on things like "why is my bill higher this month" or "can I sw
 mid-cycle." That's slow for the customer and expensive to staff.
 
 ## What it does
-A multi-agent support copilot that answers billing/plan/troubleshooting questions grounded in
+A multi-agent support agent that answers billing/plan/troubleshooting questions grounded in
 DTDL's own policy documents, and escalates to a human when it's not confident or the request
 needs an account mutation (refund, plan change).
 
