@@ -1,4 +1,4 @@
-# 🤖 Telecom Support Copilot
+# 🤖 Telecom Support Agent
 
 **A multi-agent RAG support bot that answers billing, plan, and troubleshooting questions grounded in real policy docs — and knows when to hand off to a human.**
 
