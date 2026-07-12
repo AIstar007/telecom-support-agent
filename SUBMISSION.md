@@ -1,5 +1,5 @@
 # Telecom Support Copilot
-**Role target: AI Engineer (Open Role 1)**
+**Role target: AI Engineer **
 
 ## Problem
 DTDL's products span billing, plans, WiFi/mobile services, and OTT — each with its own
