@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: telecom-support-copilot
+    env: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CHROMA_PATH
+        value: ./chroma_db
