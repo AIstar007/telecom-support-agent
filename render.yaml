@@ -5,7 +5,13 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
-      - key: OPENAI_API_KEY
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_VERSION
+        value: "2024-02-15-preview"
+      - key: AZURE_OPENAI_API_DEPLOYMENT
         sync: false
       - key: CHROMA_PATH
         value: ./chroma_db
