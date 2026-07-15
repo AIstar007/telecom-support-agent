@@ -73,7 +73,7 @@ graph TD
 | 🤖 **Domain-Specific Agents** | Injectable LLM pipeline | 3 specialized agents + orchestrator |
 | 🛡️ **Confidence Gate** | Deterministic threshold | Numeric score — not an LLM self-report |
 | 🚨 **Escalation Guard** | Keyword-rule engine | Refund / cancel / plan-switch → always human |
-| 🧪 **Zero-API Testing** | Stub injection | Full pipeline testable without an OpenAI key |
+| 🧪 **Zero-API Testing** | Stub injection | Full pipeline testable without an Azure OpenAI key |
 | 🐳 **Containerized** | Docker | One-command deployment |
 
 ---
@@ -134,7 +134,7 @@ telecom-support-agent/
 │   │   ├── ingest.py                   # chunk + embed + load policy docs
 │   │   └── retriever.py                # retrieval wrapper, fails soft to []
 │   │
-│   ├── llm.py                          # OpenAI client (only wired in when key is present)
+│   ├── llm.py                          # Azure OpenAI client (only wired in when key is present)
 │   └── main.py                         # FastAPI app + conditional LLM wiring
 │
 ├── 📁 data/policies/                   # sample billing, plan, troubleshooting docs
@@ -314,12 +314,12 @@ class HashingEmbedder(BaseEmbedder):
     """Offline keyword-overlap embedder. Zero external calls."""
     def embed(self, text: str) -> list[float]: ...
 
-class OpenAIEmbedder(BaseEmbedder):
-    """Drop-in swap for production semantic search."""
+class AzureOpenAIEmbedder(BaseEmbedder):
+    """Drop-in Azure OpenAI embedder for production semantic search."""
     def embed(self, text: str) -> list[float]: ...
 ```
 
-> Swap `HashingEmbedder` → `OpenAIEmbedder` in `config.py` for production-grade semantic search. The interface is identical.
+> Swap `HashingEmbedder` → `AzureOpenAIEmbedder` in `config.py` for production-grade semantic search. The interface is identical.
 
 ---
 
@@ -345,13 +345,13 @@ pytest tests/ --cov=app --cov-report=term-missing
 | `orchestrator.py` | 4 | Full pipeline, error handling |
 | `api.py` | 3 | `/chat` endpoint via FastAPI `TestClient` |
 
-### 🔌 Injectable LLM — Test Without an API Key
+### 🔌 Injectable LLM — Test Without Azure OpenAI Credentials
 
-Every agent accepts an injectable `llm_call` parameter. The full pipeline is unit-testable without touching a real API:
+Every agent accepts an injectable `llm_call` parameter. The full pipeline is unit-testable without touching a real Azure OpenAI deployment:
 
 ```python
-# In tests — inject a stub instead of real OpenAI
-def stub_llm(prompt: str) -> str:
+# In tests — inject a stub instead of Azure OpenAI
+def stub_llm(system_prompt: str, user_message: str) -> str:
     return "STUB: This is a test answer."
 
 agent = BillingAgent(llm_call=stub_llm)
@@ -361,10 +361,36 @@ assert result.source_citation is not None
 ```
 
 ```python
-# In production — real OpenAI client wired in only when key is present
+# In production — real Azure OpenAI client is wired in only when
+# all required Azure credentials are configured.
+
 # app/main.py
-llm_call = openai_call if OPENAI_API_KEY else stub_llm
-orchestrator = Orchestrator(llm_call=llm_call)
+ACTIVE_LLM_CALL = (
+    azure_llm_call
+    if all(
+        [
+            os.getenv("AZURE_OPENAI_API_KEY"),
+            os.getenv("AZURE_OPENAI_ENDPOINT"),
+            os.getenv("AZURE_OPENAI_API_VERSION"),
+            os.getenv("AZURE_OPENAI_DEPLOYMENT"),
+        ]
+    )
+    else stub_llm
+)
+
+orchestrator = Orchestrator(llm_call=ACTIVE_LLM_CALL)
+```
+
+### 🔐 Required Azure OpenAI Environment Variables
+
+```env
+AZURE_OPENAI_API_KEY=xxxxxxxxxxxxxxxx
+
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+
+AZURE_OPENAI_DEPLOYMENT=<your-deployment-name>
 ```
 
 ---
@@ -379,11 +405,11 @@ Required:
   - pip: latest
 
 Optional:
-  - OPENAI_API_KEY: for real LLM answers (stubs work without it)
+  - AZURE_OPENAI_API_KEY: for real LLM answers (stubs work without it)
 
 System:
   - RAM: 4GB minimum
-  - Internet: only needed if using real OpenAI
+  - Internet: only needed if using real Azure OpenAI
 ```
 
 ### 🚀 Installation
